@@ -99,7 +99,7 @@ internal sealed class Http2FrameWriter
     private bool _completed;
     private bool _aborted;
 
-    private readonly Lock _windowUpdateLock = new();
+    private readonly object _windowUpdateLock = new();
     private long _connectionWindow;
     private readonly Queue<Http2OutputProducer> _waitingForMoreConnectionWindow = new();
     // This is the stream that consumed the last set of connection window
