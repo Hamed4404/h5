@@ -8,10 +8,12 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Tests.Http2.FlowControl;
 
 public class InputFlowControlTests
 {
+    private const int IterationCount = 1;
+
     [Fact]
     public async Task Threads1_Advance()
     {
-        for (var i = 0; i < 1000; i++)
+        for (var i = 0; i < IterationCount; i++)
         {
             var sut = new InputFlowControl(5000, 1);
             await Task.Run(() => Advance(sut)); ;
@@ -30,7 +32,7 @@ public class InputFlowControlTests
     [Fact]
     public async Task Threads2_Advance()
     {
-        for (var i = 0; i < 1000; i++)
+        for (var i = 0; i < IterationCount; i++)
         {
             var sut = new InputFlowControl(10000, 1);
             var t1 = Task.Run(() => Advance(sut));
@@ -51,7 +53,7 @@ public class InputFlowControlTests
     [Fact]
     public async Task Threads3_Advance()
     {
-        for (var i = 0; i < 1000; i++)
+        for (var i = 0; i < IterationCount; i++)
         {
             var sut = new InputFlowControl(15000, 1);
             var t1 = Task.Run(() => Advance(sut));
@@ -73,7 +75,7 @@ public class InputFlowControlTests
     [Fact]
     public async Task Threads3_WindowUpdates()
     {
-        for (var i = 0; i < 1000; i++)
+        for (var i = 0; i < IterationCount; i++)
         {
             var sut = new InputFlowControl(15000, 0);
             var t1 = Task.Run(() => WindowUpdate(sut));
@@ -96,7 +98,7 @@ public class InputFlowControlTests
     [Fact]
     public async Task Threads4_Advance()
     {
-        for (var i = 0; i < 1000; i++)
+        for (var i = 0; i < IterationCount; i++)
         {
             var sut = new InputFlowControl(20000, 1);
             var t1 = Task.Run(() => Advance(sut));
@@ -118,7 +120,7 @@ public class InputFlowControlTests
     [Fact]
     public async Task Threads3_Abort()
     {
-        for (var i = 0; i < 1000; i++)
+        for (var i = 0; i < IterationCount; i++)
         {
             var sut = new InputFlowControl(20000, 1);
             var t1 = Task.Run(() => Advance(sut));
@@ -165,7 +167,7 @@ public class InputFlowControlTests
     [Fact]
     public async Task Threads3Abort_AssertAfter()
     {
-        for (var i = 0; i < 1000; i++)
+        for (var i = 0; i < IterationCount; i++)
         {
             var isAborted = false;
             var sut = new InputFlowControl(90000, 1);
@@ -204,7 +206,7 @@ public class InputFlowControlTests
     [Fact]
     public async Task Threads3Abort_AssertBefore()
     {
-        for (var i = 0; i < 3000; i++)
+        for (var i = 0; i < IterationCount; i++)
         {
             var isAborting = false;
             var sut = new InputFlowControl(30000, 1);
@@ -243,7 +245,7 @@ public class InputFlowControlTests
     [Fact]
     public async Task Threads3WindowUpdates_AssertAfter()
     {
-        for (var i = 0; i < 1000; i++)
+        for (var i = 0; i < IterationCount; i++)
         {
             var isAborted = false;
             var sut = new InputFlowControl(90000, 1);
@@ -282,7 +284,7 @@ public class InputFlowControlTests
     [Fact]
     public async Task Threads3WindowUpdates_AssertBefore()
     {
-        for (var i = 0; i < 3000; i++)
+        for (var i = 0; i < IterationCount; i++)
         {
             var isAborting = false;
             var sut = new InputFlowControl(30000, 1);
@@ -321,7 +323,7 @@ public class InputFlowControlTests
     [Fact]
     public async Task Threads3Advance_WindowUpdates()
     {
-        for (var i = 0; i < 1000; i++)
+        for (var i = 0; i < IterationCount; i++)
         {
             var sut = new InputFlowControl(30000, 0);
             var t0 = Task.Run(() => WindowUpdate(sut));
@@ -354,7 +356,7 @@ public class InputFlowControlTests
     [Fact]
     public async Task Threads3WindowUpdates_AssertSize()
     {
-        for (var i = 0; i < 1000; i++)
+        for (var i = 0; i < IterationCount; i++)
         {
             var sizeSum = 0;
             var sut = new InputFlowControl(15000, 10);

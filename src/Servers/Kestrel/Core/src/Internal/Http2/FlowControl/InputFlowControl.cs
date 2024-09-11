@@ -19,7 +19,7 @@ namespace Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http2.FlowControl;
 /// <seealso href="https://datatracker.ietf.org/doc/html/rfc9113#name-flow-control"/>
 internal sealed class InputFlowControl
 {
-    private record struct FlowControlState
+    private struct FlowControlState
     {
         private const long AbortedBitMask = 1L << 32; // uint MaxValue + 1
         internal long _state;
@@ -35,7 +35,7 @@ internal sealed class InputFlowControl
 
         public uint Available => (uint)_state;
 
-        public bool IsAborted => (_state & AbortedBitMask) > 0;
+        public bool IsAborted => _state > uint.MaxValue;
     }
 
     private readonly uint _initialWindowSize;
@@ -84,7 +84,7 @@ internal sealed class InputFlowControl
                 return false;
             }
 
-            computedFlow = new FlowControlState(currentFlow.Available - (uint)bytes, currentFlow.IsAborted);
+            computedFlow = new FlowControlState(currentFlow.Available - (uint)bytes, isAborted: false);
         } while (currentFlow._state != Interlocked.CompareExchange(ref _flow._state, computedFlow._state, currentFlow._state));
 
         return true;
@@ -110,7 +110,7 @@ internal sealed class InputFlowControl
                 // It shouldn't be possible for the window size to ever exceed Http2PeerSettings.MaxWindowSize.
                 Debug.Assert(false, $"{nameof(TryUpdateWindow)} attempted to grow window past max size.");
             }
-            computedFlow = new FlowControlState(currentFlow.Available + (uint)bytes, currentFlow.IsAborted);
+            computedFlow = new FlowControlState(currentFlow.Available + (uint)bytes, isAborted: false);
         } while (currentFlow._state != Interlocked.CompareExchange(ref _flow._state, computedFlow._state, currentFlow._state));
 
         if (_windowUpdatesDisabled)
@@ -156,7 +156,7 @@ internal sealed class InputFlowControl
                 return 0;
             }
 
-            computedFlow = new FlowControlState(currentFlow.Available, true);
+            computedFlow = new FlowControlState(currentFlow.Available, isAborted: true);
         } while (currentFlow._state != Interlocked.CompareExchange(ref _flow._state, computedFlow._state, currentFlow._state));
 
         // Tell caller to return connection window space consumed by this stream. Even if window updates have
